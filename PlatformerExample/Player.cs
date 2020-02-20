@@ -78,7 +78,7 @@ namespace PlatformerExample
         /// <summary>
         /// Gets and sets the position of the player on-screen
         /// </summary>
-        public Vector2 Position = new Vector2(200, 200);
+        public Vector2 Position = new Vector2(200, 400);
 
         public BoundingRectangle Bounds => new BoundingRectangle(Position - 1.8f * origin, 38, 41);
 
@@ -192,7 +192,7 @@ namespace PlatformerExample
 
         public void CheckForPlatformCollision(IEnumerable<IBoundable> platforms)
         {
-            Debug.WriteLine($"Checking collisions against {platforms.Count()} platforms");
+            //Debug.WriteLine($"Checking collisions against {platforms.Count()} platforms");
             if (verticalState != VerticalMovementState.Jumping)
             {
                 verticalState = VerticalMovementState.Falling;

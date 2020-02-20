@@ -26,12 +26,12 @@ namespace PlatformerExample
         /// The tracked game objects
         /// </summary>
         Dictionary<IBoundable, Box> boxes = new Dictionary<IBoundable, Box>();
-
+       
         /// <summary>
         /// The axis list
         /// </summary>
         List<EndPoint> endPoints = new List<EndPoint>();
-
+        public int count;
         /// <summary>
         /// Adds a game object to those being tracked by the 
         /// axis list
@@ -94,6 +94,7 @@ namespace PlatformerExample
                 }
                 i++;
             }
+            count = endPoints.Count();
         }
 
         public IEnumerable<IBoundable> QueryRange(float start, float end)

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace PlatformerExample
 {
@@ -12,13 +13,16 @@ namespace PlatformerExample
     public class Game1 : Game
     {
 
-
+        private bool flagReached = false;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteSheet sheet;
         Player player;
+        private SpriteFont font;
         List<Platform> platforms;
         AxisList world;
+        Texture2D flag;
+        BoundingRectangle recFlag;
 
         public Game1()
         {
@@ -36,7 +40,12 @@ namespace PlatformerExample
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            recFlag.Width = 50;
+            recFlag.Height = 50;
+            recFlag.X = 350;
+            recFlag.Y = 30;
 
+               
             base.Initialize();
         }
 
@@ -51,7 +60,7 @@ namespace PlatformerExample
 #endif
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            font = Content.Load<SpriteFont>("DefaultFont");
             // TODO: use this.Content to load your game content here
             var t = Content.Load<Texture2D>("spritesheet");
             sheet = new SpriteSheet(t, 21, 21, 3, 2);
@@ -59,11 +68,22 @@ namespace PlatformerExample
             // Create the player with the corresponding frames from the spritesheet
             var playerFrames = from index in Enumerable.Range(19, 30) select sheet[index];
             player = new Player(playerFrames);
-
+            flag = Content.Load<Texture2D>("flag");
             // Create the platforms
+            platforms.Add(new Platform(new BoundingRectangle(0, 450, 280, 30), sheet[3]));
+            platforms.Add(new Platform(new BoundingRectangle(1, 150, 105, 30), sheet[3]));
             platforms.Add(new Platform(new BoundingRectangle(80, 300, 105, 21), sheet[1]));
-            platforms.Add(new Platform(new BoundingRectangle(280, 400, 84, 21), sheet[2]));
             platforms.Add(new Platform(new BoundingRectangle(160, 200, 42, 21), sheet[3]));
+            platforms.Add(new Platform(new BoundingRectangle(180, 75, 280, 30), sheet[3]));
+            platforms.Add(new Platform(new BoundingRectangle(279, 220, 105, 30), sheet[3]));
+            platforms.Add(new Platform(new BoundingRectangle(281, 460, 1000, 30), sheet[3]));
+            platforms.Add(new Platform(new BoundingRectangle(400, 400, 84, 21), sheet[2]));
+
+            platforms.Add(new Platform(new BoundingRectangle(484, 340, 84, 21), sheet[2]));
+            platforms.Add(new Platform(new BoundingRectangle(550, 250, 84, 21), sheet[2]));
+            platforms.Add(new Platform(new BoundingRectangle(640, 300, 84, 21), sheet[2]));
+
+
 
             // Add the platforms to the axis list
             world = new AxisList();
@@ -71,6 +91,7 @@ namespace PlatformerExample
             {
                 world.AddGameObject(platform);
             }
+            Debug.WriteLine(world.count);
         }
 
         /// <summary>
@@ -98,6 +119,12 @@ namespace PlatformerExample
             // Check for platform collisions
             var platformQuery = world.QueryRange(player.Bounds.X, player.Bounds.X + player.Bounds.Width);
             player.CheckForPlatformCollision(platformQuery);
+            if (player.Bounds.CollidesWith(recFlag))
+            {
+                flagReached = true;
+            }
+                
+                
             
             base.Update(gameTime);
         }
@@ -112,7 +139,14 @@ namespace PlatformerExample
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-
+            if (flagReached)
+            {
+                spriteBatch.DrawString(font, "You Win", new Vector2(20, 20), Color.White);
+            }
+            else
+            {
+                spriteBatch.DrawString(font, "Reach the flag!", new Vector2(20, 20), Color.White);
+            }
             // Draw the platforms 
             platforms.ForEach(platform =>
             {
@@ -128,7 +162,7 @@ namespace PlatformerExample
                 sheet[i].Draw(spriteBatch, new Vector2(i*25, 25), Color.White);
             }
 
-
+            spriteBatch.Draw(flag, recFlag, Color.Red);
             spriteBatch.End();
 
             base.Draw(gameTime);
